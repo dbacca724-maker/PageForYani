@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Juego 3</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+
+<style>
+body{
+    margin:0;
+    font-family:'Poppins', sans-serif;
+    text-align:center;
+
+    background-image:url("https://i.pinimg.com/originals/a1/54/70/a1547030bf847c27ba7d3da8cd926d8c.png");
+    background-size:cover;
+    background-position:center;
+    min-height:100vh;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.35);
+    z-index:0;
+}
+
+h1, .container, #codigo, #cofre, #mensaje, #final{
+    position:relative;
+    z-index:1;
+}
+
+/* título */
+h1{
+    color:white;
+    font-size:45px;
+    text-shadow:0 0 15px #ffb3ff;
+}
+
+/* luces */
+.container{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    margin-top:60px;
+}
+
+.light{
+    width:75px;
+    height:75px;
+    border-radius:50%;
+    background:#c084fc;
+    box-shadow:0 0 10px #a855f7;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.light.active{
+    background:white;
+    box-shadow:0 0 20px white, 0 0 40px #ffb3ff;
+    transform:scale(1.2);
+}
+
+.light.correct{
+    animation: glow 0.4s ease;
+}
+
+@keyframes glow{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.4); box-shadow:0 0 30px white;}
+    100%{transform:scale(1);}
+}
+
+/* código */
+#codigo{
+    margin-top:40px;
+    font-size:26px;
+    color:white;
+    text-shadow:0 0 10px #ffb3ff;
+}
+
+/* cofre */
+#cofre{
+    display:none;
+    margin-top:20px;
+    animation: aparecer 1s ease;
+}
+
+@keyframes aparecer{
+    from{transform:scale(0);}
+    to{transform:scale(1);}
+}
+
+/* input */
+input{
+    padding:10px;
+    border-radius:10px;
+    border:none;
+    text-align:center;
+}
+
+/* botón */
+button{
+    padding:10px 22px;
+    border:none;
+    border-radius:10px;
+    background:#a855f7;
+    color:white;
+    margin-top:10px;
+    cursor:pointer;
+}
+
+/* 💌 MENSAJE MEJORADO */
+#mensaje{
+    display:none;
+    margin-top:30px;
+
+    font-size:34px;              /* 🔥 más grande */
+    color:white;
+    text-shadow:0 0 18px #ff66cc;
+
+    max-width:700px;
+    margin-left:auto;
+    margin-right:auto;
+
+    line-height:1.5;
+}
+
+/* 💖 FINAL YANI */
+#final{
+    display:none;
+    margin-top:50px;
+    font-family:'Dancing Script', cursive;
+
+    font-size:85px;              /* 🔥 más grande */
+    color:#fff;
+
+    text-shadow:0 0 25px #ff66cc, 0 0 50px #ffffff;
+    animation: brillo 1.5s infinite alternate;
+}
+
+@keyframes brillo{
+    from{opacity:0.7; transform:scale(1);}
+    to{opacity:1; transform:scale(1.1);}
+}
+
+/* confeti */
+.confeti{
+    position:fixed;
+    top:-10px;
+    width:10px;
+    height:10px;
+    background:pink;
+    animation: caer 3s linear forwards;
+}
+
+@keyframes caer{
+    to{
+        transform:translateY(100vh);
+        opacity:0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<h1>💜 Sigue la luz Yani 💜</h1>
+
+<div class="container">
+    <div class="light" onclick="clickLight(0)"></div>
+    <div class="light" onclick="clickLight(1)"></div>
+    <div class="light" onclick="clickLight(2)"></div>
+    <div class="light" onclick="clickLight(3)"></div>
+    <div class="light" onclick="clickLight(4)"></div>
+</div>
+
+<p id="codigo">Código: </p>
+
+<div id="cofre">
+    <p style="color:white;">🔐 Ingresa el código</p>
+    <input id="input">
+    <br>
+    <button onclick="abrir()">Abrir 💖</button>
+</div>
+
+<div id="mensaje">
+💖 No sé lo que puede pasar mañana, pero quiero estar contigo.  
+A veces siento que eres como un regalo del cielo.  
+Nunca olvidaré lo bonita que te veías la noche que nos conocimos,  
+ni lo nervioso que me hiciste sentir jsjs… you are the best 💖
+</div>
+
+<div id="final">
+💖 YANI TE QUIERO UN MONTÓN 💖
+</div>
+
+<script>
+
+let codigo = "";
+let activeIndex = -1;
+
+function sonido(){
+    let audio = new Audio("https://www.myinstants.com/media/sounds/mouse-click.mp3");
+    audio.play();
+}
+
+function nextLight(){
+
+    let lights = document.querySelectorAll(".light");
+
+    lights.forEach(l => l.classList.remove("active"));
+
+    activeIndex = Math.floor(Math.random()*5);
+    lights[activeIndex].classList.add("active");
+}
+
+setInterval(nextLight, 1200);
+
+function clickLight(index){
+
+    if(index === activeIndex){
+
+        sonido();
+
+        let lights = document.querySelectorAll(".light");
+        lights[index].classList.add("correct");
+
+        setTimeout(()=>lights[index].classList.remove("correct"),400);
+
+        codigo += (index+1);
+        document.getElementById("codigo").innerText = "Código: " + codigo;
+
+        if(codigo.length === 5){
+            document.getElementById("cofre").style.display = "block";
+        }
+
+    } else {
+        alert("Ups 💔 esa no brillaba");
+    }
+}
+
+function abrir(){
+
+    let input = document.getElementById("input").value;
+
+    if(input === codigo){
+        document.getElementById("mensaje").style.display = "block";
+        abrirCofre();
+        confeti();
+    } else {
+        alert("Código incorrecto 💔");
+    }
+}
+
+function abrirCofre(){
+
+    setTimeout(()=>{
+        document.getElementById("final").style.display = "block";
+    },1000);
+}
+
+function confeti(){
+
+    for(let i=0;i<50;i++){
+        let c = document.createElement("div");
+        c.classList.add("confeti");
+        c.style.left = Math.random()*100 + "vw";
+        c.style.background = ["#ffb3ec","#d8b4fe","#ffffff","#f9a8d4"][Math.floor(Math.random()*4)];
+        c.style.animationDuration = (2+Math.random()*2)+"s";
+        document.body.appendChild(c);
+
+        setTimeout(()=>c.remove(),4000);
+    }
+}
+
+</script>
+
+</body>
+</html>

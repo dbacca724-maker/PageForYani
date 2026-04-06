@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Yani atrapa los corazones 💜</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Quicksand', sans-serif;
+    background: #ffd6ff;
+}
+
+/* TÍTULO */
+h1 {
+    position: fixed;
+    top: 10px;
+    width: 100%;
+    text-align: center;
+    font-family: 'Pacifico', cursive;
+    font-size: 42px;
+    color: #c77dff;
+    text-shadow: 0 0 15px #e0aaff, 0 0 25px #fff;
+}
+
+/* SCORE */
+#score {
+    position: fixed;
+    top: 75px;
+    left: 20px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #7b2cbf;
+}
+
+/* BOTÓN VOLVER */
+#volver {
+    position: fixed;
+    top: 75px;
+    right: 20px;
+    padding: 10px 18px;
+    border-radius: 20px;
+    border: none;
+    background: #c77dff;
+    color: white;
+    cursor: pointer;
+}
+
+/* CORAZONES */
+.corazon {
+    position: absolute;
+    font-size: 50px;
+    cursor: pointer;
+    animation: caer linear;
+}
+
+@keyframes caer {
+    from { transform: translateY(-60px); }
+    to { transform: translateY(110vh); }
+}
+
+/* MENSAJES */
+.mensaje {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    color: #7b2cbf;
+    padding: 18px 25px;
+    border-radius: 25px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    max-width: 80%;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    animation: fade 5s;
+}
+
+@keyframes fade {
+    0% {opacity:0;}
+    10% {opacity:1;}
+    90% {opacity:1;}
+    100% {opacity:0;}
+}
+
+/* GANASTE */
+#ganaste {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 65px;
+    font-family: 'Pacifico', cursive;
+    color: #ff4b7d;
+    text-align: center;
+    display: none;
+    text-shadow: 0 0 20px #fff, 0 0 40px #ff85a2, 0 0 60px #ff4b7d;
+    animation: brillo 1.5s infinite alternate;
+}
+
+@keyframes brillo {
+    from {opacity: 0.7;}
+    to {opacity: 1;}
+}
+
+/* CONFETI */
+.confeti {
+    position: fixed;
+    top: -10px;
+    width: 10px;
+    height: 10px;
+    background: pink;
+    animation: caerConfeti 3s linear forwards;
+}
+
+@keyframes caerConfeti {
+    to {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<h1>Yani atrapa los corazones 💜</h1>
+
+<div id="score">💜 0 / 10</div>
+<button id="volver" onclick="history.back()">Volver</button>
+
+<div id="ganaste">
+    GANASTE GUAPA <br><br>
+    TE QUIERO YANI 
+</div>
+
+<!-- MÚSICA -->
+<audio id="musica" autoplay loop>
+    <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mpeg">
+</audio>
+
+<!-- SONIDO CLICK (burbuja suave) -->
+<audio id="clickSonido">
+    <source src="https://www.myinstants.com/media/sounds/bubble-pop.mp3">
+</audio>
+
+<script>
+const frases = [
+"Desde que te vi mi vida se volvió más bonita ",
+"Nunca olvidaré lo bonita que estabas cuando nos vimos ",
+"Tú eres mi buena suerte ",
+"Contigo soy más feliz ",
+"A tu lado la vida tiene color ",
+"Gracias por hacer mis días bonitos ",
+"Una chica como tú vale la pena ",
+"Espero seguir hablando contigo ",
+"Eres tan perfecta, como no quererte ",
+"Gracias a Dios por ponerte en mi camino "
+];
+
+let puntos = 0;
+let juegoActivo = true;
+
+function sonidoClick(){
+    let s = document.getElementById("clickSonido");
+    s.currentTime = 0;
+    s.play();
+}
+
+function confeti(){
+    for(let i=0;i<60;i++){
+        let c = document.createElement("div");
+        c.classList.add("confeti");
+        c.style.left = Math.random()*100 + "vw";
+        c.style.background = ["#ffb3ec","#d8b4fe","#ffffff","#f9a8d4"][Math.floor(Math.random()*4)];
+        c.style.animationDuration = (2+Math.random()*2)+"s";
+        document.body.appendChild(c);
+
+        setTimeout(()=>c.remove(),4000);
+    }
+}
+
+function crearCorazones(){
+    setInterval(()=>{
+
+        if(!juegoActivo) return;
+
+        let c = document.createElement("div");
+        c.className = "corazon";
+        c.innerHTML = "💜";
+
+        c.style.left = Math.random()*90 + "vw";
+        c.style.animationDuration = (Math.random()*3 + 6) + "s";
+
+        c.onclick = () => {
+            if(!juegoActivo) return;
+
+            sonidoClick();
+
+            puntos++;
+            document.getElementById("score").innerText = "💜 " + puntos + " / 10";
+
+            let mensaje = document.createElement("div");
+            mensaje.className = "mensaje";
+            mensaje.innerText = frases[puntos-1];
+
+            document.body.appendChild(mensaje);
+            setTimeout(()=>mensaje.remove(),5000);
+
+            c.remove();
+
+            if(puntos >= 10){
+                juegoActivo = false;
+                document.getElementById("ganaste").style.display = "block";
+                confeti();
+            }
+        };
+
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(),9000);
+
+    },1200);
+}
+
+crearCorazones();
+</script>
+
+</body>
+</html>
